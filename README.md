@@ -1,143 +1,149 @@
 # Debtinator
 
-A modern mobile application to manage personal debt and create payoff plans using various methods like snowball, avalanche, and custom payoff methodologies.
+A modern, cross-platform mobile application for managing personal debt and creating intelligent payoff plans. Built with React Native and Expo, Debtinator helps users visualize their debt-free journey using proven methodologies like the Snowball and Avalanche methods.
 
-## Tech Stack
+## Quick Links
 
-- **Framework**: React Native with Expo SDK 52
-- **Routing**: Expo Router (file-based routing)
-- **State Management**: Zustand
-- **Storage**: MMKV (high-performance key-value storage)
-- **UI Library**: React Native Paper (Material Design)
-- **Language**: TypeScript
+| Documentation | Description |
+|---------------|-------------|
+| [Features](docs/FEATURES.md) | Complete feature guide with usage instructions |
+| [Technology Stack](docs/TECHNOLOGY.md) | Detailed breakdown of all technologies used |
+| [Architecture](docs/ARCHITECTURE.md) | System design, patterns, and project structure |
+| [Development Guide](docs/DEVELOPMENT.md) | Setup, testing, building, and deployment |
+| [API Reference](docs/API.md) | TypeScript types, stores, and utility functions |
 
-## Features
+## Overview
 
-- **Debt Management**: Add, edit, and delete debts with details like balance, interest rate, and minimum payment
-- **Multiple Payoff Methods**:
-  - **Snowball Method**: Pay off smallest balances first for quick wins and motivation
-  - **Avalanche Method**: Pay off highest interest rates first to save money on interest
-  - **Custom Method**: Choose your own payoff order (coming soon)
-- **Payoff Planning**: Calculate detailed payoff schedules with:
-  - Total time to payoff
-  - Total interest paid
-  - Month-by-month breakdown
-- **Persistent Storage**: All debts are saved locally using MMKV (30x faster than AsyncStorage)
-- **Beautiful UI**: Modern Material Design interface
+Debtinator empowers users to:
 
-## Getting Started
+- **Track all debts** in one place with detailed information (balance, APR, minimum payments)
+- **Choose a payoff strategy** that fits their goals (Snowball, Avalanche, or Custom)
+- **Visualize progress** with interactive charts showing principal vs. interest breakdown
+- **Plan ahead** with month-by-month payment schedules and timelines
+- **Stay motivated** by seeing exactly when they'll be debt-free
+
+## Screenshots
+
+| Debts List | Payoff Plan | Charts |
+|------------|-------------|--------|
+| Manage all your debts | Calculate payoff schedules | Visualize your progress |
+
+## Quick Start
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js 18+ 
 - npm or yarn
-- For iOS: Xcode (Mac only)
-- For Android: Android Studio
+- iOS: Xcode (macOS only)
+- Android: Android Studio
 
 ### Installation
 
-1. Install dependencies:
 ```bash
-npm install
-```
+# Clone the repository
+git clone https://github.com/yourusername/debtinator.git
+cd debtinator
 
-2. Start the development server:
-```bash
+# Install dependencies
+npm install
+
+# Start the development server
 npm start
 ```
 
-3. Run on your device:
-   - **iOS**: Press `i` or run `npx expo run:ios`
-   - **Android**: Press `a` or run `npx expo run:android`
-   - **Web**: Press `w` in the terminal
+### Running the App
 
-### Project Structure
+After starting the development server, you can:
+
+- Press `i` to open in iOS Simulator
+- Press `a` to open in Android Emulator  
+- Press `w` to open in web browser
+- Scan the QR code with Expo Go on your physical device
+
+## Tech Stack at a Glance
+
+| Category | Technology |
+|----------|------------|
+| Framework | React Native with Expo SDK 52 |
+| Navigation | Expo Router (file-based) |
+| State Management | Zustand with persistence |
+| Storage | MMKV (30x faster than AsyncStorage) |
+| UI Components | React Native Paper (Material Design 3) |
+| Charts | react-native-chart-kit |
+| Language | TypeScript |
+| Testing | Jest + React Native Testing Library |
+
+## Project Structure
 
 ```
 debtinator/
-├── app/                       # All app code (Expo Router)
-│   ├── _layout.tsx           # Root layout with providers
-│   ├── (tabs)/               # Tab navigation group
-│   │   ├── _layout.tsx       # Tab layout configuration
-│   │   ├── index.tsx         # Debts screen (default tab)
-│   │   └── payoff.tsx        # Payoff plan screen
-│   ├── components/           # Reusable UI components
-│   │   └── DebtForm.tsx
-│   ├── store/                # Zustand stores
-│   │   └── useDebtStore.ts
-│   ├── types/                # TypeScript type definitions
-│   │   └── index.ts
-│   └── utils/                # Utility functions
-│       └── payoffCalculations.ts
-├── assets/                   # Images and icons
-└── package.json
+├── src/
+│   ├── app/                    # Screens (Expo Router)
+│   │   ├── (tabs)/            # Tab navigation
+│   │   │   ├── debts.tsx      # Debt management
+│   │   │   ├── payoff.tsx     # Payoff planning
+│   │   │   └── index.tsx      # Home redirect
+│   │   ├── charts.tsx         # Data visualization
+│   │   ├── payoff-timeline.tsx # Month-by-month view
+│   │   └── settings.tsx       # App settings
+│   ├── components/            # Reusable UI components
+│   ├── store/                 # Zustand state stores
+│   ├── theme/                 # Design tokens & themes
+│   ├── types/                 # TypeScript definitions
+│   └── utils/                 # Business logic & helpers
+├── assets/                    # Images and icons
+├── e2e/                       # End-to-end tests
+└── docs/                      # Documentation
 ```
 
-## Usage
+## Key Features
 
-### Adding a Debt
+### Debt Management
+Add, edit, and organize debts by type (Credit Cards, Personal Loans, Other). View summary statistics including total debt, weighted average APR, and minimum payments.
 
-1. Navigate to the "Debts" tab
-2. Tap the floating action button (+)
-3. Fill in the debt details:
-   - **Debt Name**: e.g., "Credit Card", "Car Loan"
-   - **Current Balance**: The amount you currently owe
-   - **Interest Rate (APR %)**: Annual percentage rate
-   - **Minimum Payment**: Your required monthly minimum payment
-4. Tap "Add Debt"
+### Payoff Strategies
+- **Snowball Method**: Pay smallest balances first for psychological wins
+- **Avalanche Method**: Pay highest interest first to minimize total interest
+- **Custom Method**: Define your own payoff order (coming soon)
 
-### Creating a Payoff Plan
+### Visualization
+- **Pie Charts**: See principal vs. interest breakdown
+- **Line Charts**: Track balance reduction over time
+- **Timeline View**: Month-by-month payment schedule
 
-1. Navigate to the "Payoff" tab
-2. Select a payoff method:
-   - **Snowball**: Best for motivation (pay smallest first)
-   - **Avalanche**: Best for saving money (pay highest interest first)
-   - **Custom**: Choose your own order
-3. Enter your total monthly payment amount
-4. View your calculated payoff plan
+### Theming
+- Light and Dark mode support
+- System theme detection
+- Material Design 3 components
 
-### Editing or Deleting a Debt
+## Scripts
 
-- **Edit**: Tap on a debt card
-- **Delete**: Long-press on a debt card and confirm
+```bash
+npm start          # Start Expo development server
+npm run ios        # Run on iOS simulator
+npm run android    # Run on Android emulator
+npm run web        # Run in web browser
+npm test           # Run tests with coverage
+npm run test:e2e   # Run Playwright E2E tests
+npm run build:dev  # Build development client
+npm run build:prod # Build production app
+```
 
-## Payoff Methods Explained
+## Contributing
 
-### Snowball Method
-Pay off debts starting with the smallest balance first. Provides psychological wins as you eliminate debts quickly.
-
-### Avalanche Method
-Pay off debts starting with the highest interest rate first. Minimizes total interest paid over time.
-
-### Custom Method
-Choose your own payoff order based on your preferences.
-
-## Architecture
-
-### Why Expo Router?
-- File-based routing (similar to Next.js)
-- Type-safe navigation
-- Deep linking out of the box
-
-### Why Zustand?
-- Minimal boilerplate
-- Built-in persistence middleware
-- ~1KB bundle size
-
-### Why MMKV?
-- 30x faster than AsyncStorage
-- Synchronous API
-- Used by major apps (WeChat, Facebook)
-
-## Future Enhancements
-
-- [ ] Custom payoff order editor (drag and drop)
-- [ ] Progress tracking with charts
-- [ ] Payment reminders
-- [ ] Export to PDF
-- [ ] Dark mode
-- [ ] Data backup and sync
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [Expo](https://expo.dev/) for the amazing React Native toolchain
+- [React Native Paper](https://reactnativepaper.com/) for Material Design components
+- [Zustand](https://zustand-demo.pmnd.rs/) for lightweight state management
+- [MMKV](https://github.com/mrousavy/react-native-mmkv) for blazing-fast storage
