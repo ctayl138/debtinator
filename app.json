@@ -38,7 +38,12 @@
     "plugins": [
       "expo-router",
       "expo-asset",
-      ["expo-screen-orientation", { "initialOrientation": "DEFAULT" }]
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "DEFAULT"
+        }
+      ]
     ],
     "extra": {
       "router": {
@@ -47,6 +52,7 @@
       "eas": {
         "projectId": "a8795b63-552e-4d31-afe2-2c53757617af"
       }
-    }
+    },
+    "owner": "ctaylor138"
   }
 }
