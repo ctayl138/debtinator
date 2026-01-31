@@ -1,8 +1,9 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
-import { List, Divider, useTheme } from 'react-native-paper';
+import { List, Divider, useTheme, TextInput } from 'react-native-paper';
 import { useNavigation, useRouter } from 'expo-router';
 import { useThemeStore } from '@/store/useThemeStore';
+import { useIncomeStore } from '@/store/useIncomeStore';
 import type { ThemeMode } from '@/theme/tokens';
 
 const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
@@ -17,7 +18,23 @@ export default function SettingsScreen() {
   const router = useRouter();
   const mode = useThemeStore((s) => s.mode);
   const setMode = useThemeStore((s) => s.setMode);
+  const monthlyIncome = useIncomeStore((s) => s.monthlyIncome);
+  const setMonthlyIncome = useIncomeStore((s) => s.setMonthlyIncome);
   const [expandedId, setExpandedId] = useState<string | number>('appearance');
+  const [incomeInput, setIncomeInput] = useState(
+    monthlyIncome > 0 ? monthlyIncome.toString() : ''
+  );
+
+  useEffect(() => {
+    setIncomeInput(monthlyIncome > 0 ? monthlyIncome.toString() : '');
+  }, [monthlyIncome]);
+
+  const handleIncomeBlur = () => {
+    const parsed = parseFloat(incomeInput);
+    const value = isNaN(parsed) || parsed < 0 ? 0 : parsed;
+    setMonthlyIncome(value);
+    setIncomeInput(value > 0 ? value.toString() : '');
+  };
 
   const headerBg = (theme.colors as { header?: string }).header ?? theme.colors.surface;
   const headerFg = (theme.colors as { onHeader?: string }).onHeader ?? theme.colors.onSurface;
@@ -79,6 +96,33 @@ export default function SettingsScreen() {
         <Divider />
 
         <List.Accordion
+          id="income"
+          title="Income"
+          left={(props) => <List.Icon {...props} icon="cash" />}
+          right={(props) => (
+            <List.Icon
+              {...props}
+              icon={props.isExpanded ? 'chevron-up' : 'chevron-down'}
+            />
+          )}
+        >
+          <TextInput
+            label="Monthly Income (optional)"
+            value={incomeInput}
+            onChangeText={setIncomeInput}
+            onBlur={handleIncomeBlur}
+            mode="outlined"
+            keyboardType="decimal-pad"
+            placeholder="0.00"
+            left={<TextInput.Affix text="$" />}
+            style={styles.incomeInput}
+            testID="income-input"
+          />
+        </List.Accordion>
+
+        <Divider />
+
+        <List.Accordion
           id="help"
           title="Help"
           left={(props) => <List.Icon {...props} icon="help-circle-outline" />}
@@ -109,5 +153,9 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: 24,
+  },
+  incomeInput: {
+    marginHorizontal: 16,
+    marginBottom: 16,
   },
 });

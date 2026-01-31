@@ -33,6 +33,12 @@ jest.mock('@/store/usePayoffFormStore', () => ({
   }),
 }));
 
+let mockMonthlyIncome = 0;
+jest.mock('@/store/useIncomeStore', () => ({
+  useIncomeStore: (selector: (s: { monthlyIncome: number }) => unknown) =>
+    selector({ monthlyIncome: mockMonthlyIncome }),
+}));
+
 function wrap(children: React.ReactNode) {
   return <PaperProvider>{children}</PaperProvider>;
 }
@@ -45,6 +51,7 @@ describe('PayoffScreen', () => {
     mockDebts = [];
     mockMethod = 'snowball';
     mockMonthlyPayment = '';
+    mockMonthlyIncome = 0;
     jest.useFakeTimers();
   });
 
@@ -177,6 +184,23 @@ describe('PayoffScreen', () => {
     expect(queryByLabelText('Open payoff timeline')).toBeNull();
     expect(queryByLabelText('Open charts')).toBeNull();
     expect(getByLabelText('Open settings')).toBeOnTheScreen();
+  });
+
+  it('shows income insights card when monthly income is set', () => {
+    mockDebts = [{ id: '1', name: 'Card', type: 'credit_card', balance: 1000, interestRate: 15, minimumPayment: 30, createdAt: '' }];
+    mockMonthlyPayment = '100';
+    mockMonthlyIncome = 5000;
+    render(wrap(<PayoffScreen />));
+    expect(screen.getByTestId('income-insights-card')).toBeOnTheScreen();
+    expect(screen.getByText('Income Insights')).toBeOnTheScreen();
+    expect(screen.getByText(/0\.6% of income/)).toBeOnTheScreen();
+  });
+
+  it('shows hint to add income in Settings when income is not set', () => {
+    mockDebts = [{ id: '1', name: 'Card', type: 'credit_card', balance: 1000, interestRate: 15, minimumPayment: 30, createdAt: '' }];
+    mockMonthlyIncome = 0;
+    render(wrap(<PayoffScreen />));
+    expect(screen.getByText(/Add your income in Settings/)).toBeOnTheScreen();
   });
 
   it('header settings button receives pressed state when schedule is null', () => {

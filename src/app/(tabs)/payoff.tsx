@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRouter } from 'expo-router';
 import { useDebts } from '@/store/useDebtStore';
 import { usePayoffFormStore } from '@/store/usePayoffFormStore';
+import { useIncomeStore } from '@/store/useIncomeStore';
 import { PayoffMethod, PayoffPlan } from '@/types';
 import { calculatePayoffSchedule } from '@/utils/payoffCalculations';
 import { createPressedStyle } from '@/utils/styles';
@@ -18,6 +19,7 @@ export default function PayoffScreen() {
   const router = useRouter();
   const debts = useDebts();
   const { method, monthlyPayment, setMethod, setMonthlyPayment } = usePayoffFormStore();
+  const monthlyIncome = useIncomeStore((s) => s.monthlyIncome);
 
   const totalMinimumPayments = useMemo(
     () => debts.reduce((sum, debt) => sum + debt.minimumPayment, 0),
@@ -144,8 +146,40 @@ export default function PayoffScreen() {
             <Text variant="bodySmall" style={styles.hint}>
               Minimum payments total: {formatCurrency(totalMinimumPayments)}
             </Text>
+            {monthlyIncome === 0 && (
+              <Text variant="bodySmall" style={[styles.hint, { color: theme.colors.onSurfaceVariant }]}>
+                Add your income in Settings to see debt-to-income insights
+              </Text>
+            )}
           </Card.Content>
         </Card>
+
+        {monthlyIncome > 0 && (
+          <Card style={styles.card} testID="income-insights-card">
+            <Card.Content>
+              <Text variant="titleLarge" style={styles.sectionTitle}>
+                Income Insights
+              </Text>
+              <View style={styles.summaryRow}>
+                <Text variant="bodyLarge">Minimum payments:</Text>
+                <Text variant="bodyLarge" style={styles.summaryValue}>
+                  {((totalMinimumPayments / monthlyIncome) * 100).toFixed(1)}% of income
+                </Text>
+              </View>
+              {schedule && parseFloat(monthlyPayment) > 0 && (
+                <View style={styles.summaryRow}>
+                  <Text variant="bodyLarge">Your payment:</Text>
+                  <Text variant="bodyLarge" style={styles.summaryValue}>
+                    {((parseFloat(monthlyPayment) / monthlyIncome) * 100).toFixed(1)}% of income
+                  </Text>
+                </View>
+              )}
+              <Text variant="bodySmall" style={[styles.incomeHint, { color: theme.colors.onSurfaceVariant }]}>
+                Experts suggest keeping debt payments under 36% of gross income
+              </Text>
+            </Card.Content>
+          </Card>
+        )}
 
         {schedule && (
           <Card style={styles.card}>
@@ -219,6 +253,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   hint: {},
+  incomeHint: {
+    marginTop: 8,
+  },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

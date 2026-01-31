@@ -212,6 +212,21 @@ The timeline uses infinite scroll - keep scrolling to load more months.
 
 Tap the **gear icon** in the header from any screen.
 
+### Income (Optional)
+
+Track your monthly income for debt-to-income insights:
+
+1. Open **Settings** and expand the **Income** section
+2. Enter your **Monthly Income** (e.g., take-home pay)
+3. Tap outside the field to save
+
+When income is set, the **Payoff** tab shows:
+- **Minimum payments as % of income** – How much of your income goes to minimum payments
+- **Your payment as % of income** – When you enter a monthly payment, see what percentage of income it represents
+- A reminder that experts suggest keeping debt payments under 36% of gross income
+
+Income data is stored locally and never shared.
+
 ### Appearance Settings
 
 #### Theme Mode
@@ -238,6 +253,7 @@ All your data is automatically saved locally using MMKV storage:
 
 - Debts are persisted across app restarts
 - Theme preference is remembered
+- Income (if set) is saved
 - Payoff method selection is maintained
 
 > **Note**: Data is stored only on your device. There is currently no cloud backup.

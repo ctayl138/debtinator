@@ -9,6 +9,13 @@ jest.mock('@/store/useThemeStore', () => ({
     selector({ mode: mockMode, setMode: mockSetMode }),
 }));
 
+let mockMonthlyIncome = 0;
+const mockSetMonthlyIncome = jest.fn();
+jest.mock('@/store/useIncomeStore', () => ({
+  useIncomeStore: (selector: (s: { monthlyIncome: number; setMonthlyIncome: jest.Mock }) => unknown) =>
+    selector({ monthlyIncome: mockMonthlyIncome, setMonthlyIncome: mockSetMonthlyIncome }),
+}));
+
 const mockSetOptions = jest.fn();
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
@@ -103,5 +110,62 @@ describe('SettingsScreen', () => {
     render(wrap(<SettingsScreen />));
     fireEvent.press(screen.getByText('Help'));
     expect(screen.getByTestId('help-documentation-link')).toBeOnTheScreen();
+  });
+
+  it('renders Income accordion', () => {
+    render(wrap(<SettingsScreen />));
+    expect(screen.getByText('Income')).toBeOnTheScreen();
+  });
+
+  it('renders income input when Income accordion is expanded', () => {
+    render(wrap(<SettingsScreen />));
+    fireEvent.press(screen.getByText('Income'));
+    expect(screen.getByTestId('income-input')).toBeOnTheScreen();
+  });
+
+  it('calls setMonthlyIncome when income input loses focus with valid value', () => {
+    render(wrap(<SettingsScreen />));
+    fireEvent.press(screen.getByText('Income'));
+    const input = screen.getByTestId('income-input');
+    fireEvent.changeText(input, '5000');
+    fireEvent(input, 'blur');
+    expect(mockSetMonthlyIncome).toHaveBeenCalledWith(5000);
+  });
+
+  it('syncs income input from store when monthlyIncome > 0', () => {
+    mockMonthlyIncome = 5000;
+    render(wrap(<SettingsScreen />));
+    fireEvent.press(screen.getByText('Income'));
+    const input = screen.getByTestId('income-input');
+    expect(input.props.value).toBe('5000');
+  });
+
+  it('clears income and sets 0 when blur with invalid value', () => {
+    render(wrap(<SettingsScreen />));
+    fireEvent.press(screen.getByText('Income'));
+    const input = screen.getByTestId('income-input');
+    fireEvent.changeText(input, 'abc');
+    fireEvent(input, 'blur');
+    expect(mockSetMonthlyIncome).toHaveBeenCalledWith(0);
+    expect(screen.getByTestId('income-input').props.value).toBe('');
+  });
+
+  it('clears income and sets 0 when blur with negative value', () => {
+    render(wrap(<SettingsScreen />));
+    fireEvent.press(screen.getByText('Income'));
+    const input = screen.getByTestId('income-input');
+    fireEvent.changeText(input, '-100');
+    fireEvent(input, 'blur');
+    expect(mockSetMonthlyIncome).toHaveBeenCalledWith(0);
+  });
+
+  it('clears income input when blur with zero', () => {
+    mockMonthlyIncome = 5000;
+    render(wrap(<SettingsScreen />));
+    fireEvent.press(screen.getByText('Income'));
+    const input = screen.getByTestId('income-input');
+    fireEvent.changeText(input, '0');
+    fireEvent(input, 'blur');
+    expect(mockSetMonthlyIncome).toHaveBeenCalledWith(0);
   });
 });

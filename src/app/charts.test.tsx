@@ -184,6 +184,17 @@ describe('ChartsScreen', () => {
     expect(mockLockAsync).toHaveBeenCalledWith('portrait');
   });
 
+  it('useFocusEffect cleanup catch handles lockAsync rejection', () => {
+    mockDebts = [{ id: '1', name: 'Card', type: 'credit_card', balance: 1000, interestRate: 15, minimumPayment: 30, createdAt: '' }];
+    mockMonthlyPayment = '100';
+    mockLockAsync.mockRejectedValueOnce(new Error('orientation lock failed'));
+    const { unmount } = render(wrap(<ChartsScreen />));
+    unmount();
+    expect(mockLockAsync).toHaveBeenCalledWith('portrait');
+    // catch handler swallows the error - no unhandled rejection
+    return Promise.resolve();
+  });
+
   it('orientation button style receives pressed state on pressIn', () => {
     mockDebts = [{ id: '1', name: 'Card', type: 'credit_card', balance: 1000, interestRate: 15, minimumPayment: 30, createdAt: '' }];
     mockMonthlyPayment = '100';
