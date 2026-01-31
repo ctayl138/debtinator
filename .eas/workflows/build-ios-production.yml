@@ -1,4 +1,4 @@
-name: iOS production build
+name: iOS production build and submit
 
 on:
   push:
@@ -10,4 +10,12 @@ jobs:
     type: build
     params:
       platform: ios
+      profile: production
+  submit_ios:
+    name: Submit to App Store
+    type: submit
+    needs: [build_ios]
+    params:
+      platform: ios
+      build_id: ${{ needs.build_ios.outputs.build_id }}
       profile: production
