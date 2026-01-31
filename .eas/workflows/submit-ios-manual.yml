@@ -1,0 +1,21 @@
+# Run manually when you have a build_id from a completed iOS build.
+# Usage: eas workflow:run .eas/workflows/submit-ios-manual.yml
+# You'll be prompted for build_id, or pass it: -F build_id=YOUR_BUILD_ID
+name: Submit iOS build (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        type: string
+        required: true
+        description: "Build ID from a completed iOS production build (from expo.dev builds page)"
+
+jobs:
+  submit_ios:
+    name: Submit to App Store
+    type: submit
+    params:
+      platform: ios
+      build_id: ${{ inputs.build_id }}
+      profile: production
